@@ -1,4 +1,4 @@
-/* KCamera.ms — module for camera settings and operations
+/* kShot.ms — module for holding all the shot information, reads source data and prepares for application
    Location: 3dsMax__Kamaji/code/ms/modules/KCamera.ms
 */
 
@@ -7,10 +7,12 @@ struct KShot
    version         = "0.1.0",
 
    /* -------- Source -------- */
-   srcShotFolder = undefined,
-   srcShotName   = undefined, 
-   srcRefplate   = undefined, 
-   srcRefRange   = undefined,
+   srcShotFolder     = undefined,
+   srcShotName       = undefined, 
+   srcRefPlate       = undefined, 
+   srcRefRange       = undefined,
+   srcRenderOutput   = undefined,
+   srcRenderRange    = undefined,
 
    /* -------- Internals -------- */
 
@@ -38,45 +40,78 @@ struct KShot
 
    fn _init self =
    (
-      print "init"   
-      self._parseShotName self
+      -- Infer details from shot folder contents
+      self._parseShotName        self
+      self._parseRefPlate        self
+      self._parseRefRange        self
+      self._parseRenderOutput    self
+      self._parseRenderRange     self
 
-
-
-      -- TODO: Inspect Self
-      -- Once all done, inspect self
-      self._inspect self
-
+      -- Build the viewport callback
+      Kamaji.commands._constructKamajiViewportFramerangeUpdate self
    ),
 
-    function _inspect self =
-    (
-        props = getPropNames self
-
-        for p in props do
-        (
-            local v = getProperty self p
-            format "%\n    %\n" p v
-        )
-    ),
-   
+   -- Get the shot name from the srcShotFolder
    fn _parseShotName self = 
    (
-      print "_parseShotName"
-
       parts = filterString self.srcShotFolder "\\"
-      self.srcShotName = parts[parts.count]  -- last element
+      self.srcShotName = parts[parts.count]
+   ),
 
+   fn _parseRefPlate self =
+   (
+      -- Locate the highest iterated shot reference folder
+      self.srcRefPlate = (Kamaji.utilities._getHighestVersionFolder (self.srcShotFolder + @"\Reference\" ) )
+   ),
+
+   fn _parseRefRange self =
+   (
+      self.srcRefRange = Kamaji.utilities._getSequenceRange self.srcRefPlate
+   ),
+
+   fn _parseRenderOutput self =
+   (
+      -- Locate the highest iterated shot render folder
+      self.srcRenderOutput = (Kamaji.utilities._getHighestVersionFolder (self.srcShotFolder + @"\Renders\" ) )
+   ),
+
+   fn _parseRenderRange self =
+   (
+      -- Read the first and last frames from the render folders
+      self.srcRenderRange = Kamaji.utilities._getSequenceRange self.srcRenderOutput
+
+      -- if the ref and render are the same, add padding to the render range
+      if self.srcRenderRange == self.srcRefRange then
+      (
+         self.srcRenderRange[1] = (self.srcRenderRange[1] - kamaji.preferences.headsAndTails )
+         self.srcRenderRange[2] = (self.srcRenderRange[2] + kamaji.preferences.headsAndTails )
+      )
    ),
 
    fn _name self = 
    (
    
+   ),
+
+   fn _unitTest self = 
+   (
+
    )
 
 )
 
-newKShot                = KShot()
-newKShot.srcShotFolder   = @"Y:\Projects\Hess - Animated Shorts\SPOT_Intro_90secTEST\HESS_Sc010_Sh010"
-newKShot._init newKShot
 
+-- Triggers Unit Test if running #direct
+if Kamaji.execContext == #direct    then
+(
+   clearListener()
+   print (" #### UNIT TEST: " + (getfilenamefile(getThisScriptFilename() )) + " ####")
+
+   newKShot                   = KShot()                                                            -- make a new kShot
+   newKShot.srcShotFolder     = ((trimright Kamaji.execDir @"\code") + @"\data\HESS_Sc010_Sh010" ) -- Point to the test shot directory on disk
+   newKShot._init newKShot                                                                         -- initalize the new kShot         
+   Kamaji._inspect newKShot                                                                        -- Inspect kShot ( self )
+)
+
+-- Skips Unit Test if running #indirect
+if Kamaji.execContext == #indirect  then ( print ("FILE LOADED: " + (getfilenamefile(getThisScriptFilename() ))))
