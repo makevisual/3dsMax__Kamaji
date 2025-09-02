@@ -16,8 +16,11 @@ struct Kamaji_Commands
 
          -- TODO: need to make this exposed to the callback, probably through a scene object
 
-         srcRefRange       = kShot.srcRefRange    -- = [1012,1050]
-         srcRenderRange    = kShot.srcRenderRange -- = [1000,1062]
+         -- srcRefRange       = kShot.srcRefRange    -- = [1012,1050]
+         -- srcRenderRange    = kShot.srcRenderRange -- = [1000,1062]
+
+         srcRefRange       = [1012,1050]
+         srcRenderRange    = [1000,1062]
 
          frameType = #outOfRange -- #heads #tails #inShot
 
@@ -58,6 +61,8 @@ struct Kamaji_Commands
          
       unregisterRedrawViewsCallback kamajiViewportFramerangeUpdate -- Unregister previous callbacks to avoid duplicates
       registerRedrawViewsCallback kamajiViewportFramerangeUpdate 
+
+      
    ),
 
 

@@ -48,6 +48,7 @@ struct KShot
       self._parseRenderRange     self
 
       -- Build the viewport callback
+
       Kamaji.commands._constructKamajiViewportFramerangeUpdate self
    ),
 

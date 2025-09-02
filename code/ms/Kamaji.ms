@@ -11,17 +11,25 @@ global Kamaji
 
 struct KamajiCore
 (
-    version         = "0.1.0",
+    -- Identifiers
+    version         = "0.1.0",      -- Version number
     execDir         = undefined,    -- folder containing this Kamaji.ms (…/code/ms/)
-    data            = undefined,    -- KamajiData instance
-    modules         = undefined,    -- all of the defined modules loaded from 
-    ui              = #(),          -- Holds all UI
-    commands        = undefined,    -- Kamaji_Commands()
-    utilities       = undefined,    -- Kamaji_Utilities()
+
+    -- Classes and libraries
+    commands        = undefined,    -- Kamaji_Commands.ms       - things that talk to the 3dsMax Scene
+    utilities       = undefined,    -- Kamaji_Utilities.ms      - things that Kamaji uses, like file parsing functions
+    preferences     = undefined,    -- Kamaji_preferences.ms    - holds default preferences, if inference fails
+
+    -- Dynamic memory objects
+    data            = undefined,    -- TODO: KamajiData instance
+    modules         = undefined,    -- TODO: all of the defined modules loaded from 
+    ui              = #(),          -- TODO: Holds all UI
+
+    -- Global flags
     logLevel        = #debug,       -- #debug/#info/#warn/#error
     isReady         = false,        -- overall initCheck
     execContext     = #indirect,    -- Bool to identify if files are executed directly ( #direct ) or through filein ( #indirect )
-    preferences     = undefined,    -- Bool to identify if files are executed directly ( #direct ) or through filein ( #indirect )
+    knowledgeMode   = #inference,   -- TODO: implement different source information modes, like parsing folders ( #inference ) or from hIero ( #hiero )
 
     function _inspect self =
     (
