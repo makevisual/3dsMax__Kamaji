@@ -65,6 +65,7 @@ struct Kamaji_Commands
       
    ),
 
+   
 
    fn _init self =
    (

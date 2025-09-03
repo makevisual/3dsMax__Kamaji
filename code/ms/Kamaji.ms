@@ -21,15 +21,15 @@ struct KamajiCore
     preferences     = undefined,    -- Kamaji_preferences.ms    - holds default preferences, if inference fails
 
     -- Dynamic memory objects
-    data            = undefined,    -- TODO: KamajiData instance
-    modules         = undefined,    -- TODO: all of the defined modules loaded from 
-    ui              = #(),          -- TODO: Holds all UI
+    data            = undefined,    -- TODO: KamajiData instance - Holds all prepared and actionable initialized data
+    modules         = #(),          -- dictionary of all of the defined modules in #(name, struct) dictionary format
+    ui              = #(),          -- TODO: Holds all UI, for collect and management 
 
     -- Global flags
     logLevel        = #debug,       -- #debug/#info/#warn/#error
     isReady         = false,        -- overall initCheck
     execContext     = #indirect,    -- Bool to identify if files are executed directly ( #direct ) or through filein ( #indirect )
-    knowledgeMode   = #inference,   -- TODO: implement different source information modes, like parsing folders ( #inference ) or from hIero ( #hiero )
+    controlMode     = #inference,   -- TODO: implement different source information modes, like parsing folders ( #inference ) or from hIero ( #hiero )
 
     function _inspect self =
     (
@@ -45,14 +45,28 @@ struct KamajiCore
 
     function _init =
     (
-        -- Set the directory that things are running in
+        -- Set the exec directory
         Kamaji.execDir = ( trimright (getThisScriptFilename()) @"ms\Kamaji.ms" )
-
         
-        filein ( Kamaji.execDir + @"\ms\core\Kamaji_Utilities.ms" )     -- Import Utilites
-        filein ( Kamaji.execDir + @"\ms\core\Kamaji_Preferences.ms" )     -- Import Utilites
-        filein ( Kamaji.execDir + @"\ms\core\Kamaji_Commands.ms" )     -- Import Utilites
-        filein ( Kamaji.execDir + @"\ms\modules\kShot.ms" )             -- build a new kShot
+        -- Import core libraries 
+        filein ( Kamaji.execDir + @"\ms\core\Kamaji_Utilities.ms" )         -- Import Utilites
+        filein ( Kamaji.execDir + @"\ms\core\Kamaji_Preferences.ms" )       -- Import Preferences
+        filein ( Kamaji.execDir + @"\ms\core\Kamaji_Commands.ms" )          -- Import Commands
+
+        -- Load the individual modules - these map and assign themselves to Kamaji.modules for retrieval and construction
+        -- TODO: Dynamically load these
+        filein ( Kamaji.execDir + @"\ms\modules\kShot.ms" )
+        filein ( Kamaji.execDir + @"\ms\modules\kScene.ms" )
+        filein ( Kamaji.execDir + @"\ms\modules\kCamera.ms" )
+        filein ( Kamaji.execDir + @"\ms\modules\kPreview.ms" )
+
+        -- Test build the kShot module
+        print (Kamaji.utilities._moduleBuild #kShot )
+        print (Kamaji.utilities._moduleBuild #kScene )
+        print (Kamaji.utilities._moduleBuild #kCamera )
+        print (Kamaji.utilities._moduleBuild #kPreview )
+
+        print Kamaji.preferences
     )
 )
 
@@ -60,8 +74,6 @@ struct KamajiCore
 clearlistener()
 Kamaji = KamajiCore()
 Kamaji._init()
-Kamaji._inspect Kamaji
-
-
+--Kamaji._inspect Kamaji
 
 Kamaji.execContext = #direct -- Flips context once everything is fully loaded, do once all files are loaded

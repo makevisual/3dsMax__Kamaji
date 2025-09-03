@@ -10,6 +10,22 @@ struct Kamaji_Utilities
    (
    ),
 
+   /* Returns instance the module struct of the passed moduleTag
+   */
+   fn _moduleBuild moduleTag =
+   (
+      for module in Kamaji.modules do
+      (
+         if module[1] == moduleTag then
+         (
+            newInstance = (module[2])()   -- instantiate the retrieved module
+            return newInstance            -- return the instance
+         )
+      )
+
+      return #None
+   ),
+
    /* Returns the highest version folder in a given base path.
       Works for folders named "v001", "v002" or "something_v001", etc.
    */
