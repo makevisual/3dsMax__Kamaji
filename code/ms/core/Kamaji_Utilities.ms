@@ -64,19 +64,28 @@ struct Kamaji_Utilities
    fn _getSequenceRange folderPath =
    (
        -- Get all files in the folder and sort them alphanumerically
-       local files = sort (getFiles (pathConfig.appendPath folderPath "*.*"))
+--       local files = sort (getFiles (pathConfig.appendPath folderPath "*.*"))
+
+      local files = for file in (getFiles (pathConfig.appendPath folderPath "*.*")) 
+          where (matchPattern file pattern:"*.jpg" ignoreCase:true ) or (matchPattern file pattern:"*.jpeg" ignoreCase:true) collect file
+      files = sort files
+
+--      print " #### FILES #### "
+--      print files
+
        
        -- Helper function to extract the frame number from a filename
        fn _getFrameFromFile file =
        (
+
+--         print ( "-----" + file )
+
            -- Strip folder + extension, leaving just the base name
            -- Split base name by both "." and "_" characters
            local parts = filterString (getFilenameFile file) "._"
            
            -- Return the last token (assumed to be the frame number) as an integer
            (parts[parts.count]) as integer
-		   
-		   --TODO: Breaking because of .ifl file in the folder
        )
        
        -- Return the first and last frame numbers in the sequence
@@ -94,7 +103,7 @@ if Kamaji.execContext == #direct    then
 
    --print (Kamaji.utilities._getHighestVersionFolder @"C:\Users\theon\OneDrive\Documents\GitHub\3dsMax__Kamaji\data\HESS_Sc010_Sh010\Reference")
    --print (Kamaji.utilities._getHighestVersionFolder @"C:\Users\theon\OneDrive\Documents\GitHub\3dsMax__Kamaji\data\HESS_Sc010_Sh010\Renders")
-   print (Kamaji.utilities._getSequenceRange @"C:\Users\theon\OneDrive\Documents\GitHub\3dsMax__Kamaji\data\HESS_Sc010_Sh010\Reference\v001")
+   print (Kamaji.utilities._getSequenceRange @"C:\Users\AaronDabelow\Documents\GitHub\3dsMax__Kamaji\data\HESS_Sc010_Sh010\Reference\v002")
 
    Kamaji._inspect Kamaji.utilities
 )

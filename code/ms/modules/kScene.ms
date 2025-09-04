@@ -91,7 +91,7 @@ struct KScene
       --viewport.setUseBitmap true         -- "Use Files"
       viewport.DispBkgImage = true       -- show background
       setBkgImageAnimate true            -- animate background (sequence)
-      setBkgStartTime (startFrm)  -- "Start At"
+--      setBkgStartTime (startFrm)  -- "Start At"
 -- TODO
 --      setBkgFrameRange [0,98,1]
 
