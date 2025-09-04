@@ -10,6 +10,20 @@ struct Kamaji_Utilities
    (
    ),
 
+   fn _createIFL fileList =
+   (
+      sort fileList
+      iflPath = ( ( getFilenamePath fileList[1] ) + @"\refPlate.ifl" )
+      
+      f = createFile iflPath
+      for curFile in fileList do format "%\r\n" (filenameFromPath curFile) to:f  -- write one per line
+      close f
+      
+      if ( doesFileExist iflPath )
+      then ( return iflPath )
+      else ( return  undefined )
+   ),
+
    /* Returns instance the module struct of the passed moduleTag
    */
    fn _moduleBuild moduleTag =
@@ -61,6 +75,8 @@ struct Kamaji_Utilities
            
            -- Return the last token (assumed to be the frame number) as an integer
            (parts[parts.count]) as integer
+		   
+		   --TODO: Breaking because of .ifl file in the folder
        )
        
        -- Return the first and last frame numbers in the sequence

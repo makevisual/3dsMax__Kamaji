@@ -80,8 +80,14 @@ struct KShot
       newPre.previewFilename     = (self.srcShotName + "__Preview")
       newPre.previewFormat       = pref.previewFormat
 
+
       -- Build the viewport callback
       -- Kamaji.commands._constructKamajiViewportFramerangeUpdate self
+   ),
+
+   fn _processKShot self =
+   (
+         self.kScene._run self.kScene
    ),
 
    -- Get the shot name from the srcShotFolder
